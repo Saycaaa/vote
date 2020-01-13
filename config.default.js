@@ -1,14 +1,14 @@
 module.exports = {
     port:"8080",
     oapiHost: 'https://oapi.dingtalk.com',
-    // appkey: 'ding3rshvth5dvkennuo', 
-    appkey: 'ding45k7jzzaazg6stmg', 
-    // appsecret: 'PdU597wy0qhr4TiWmq1q958z1WeS41QUAGNEk7Y4n9-K1OX8pZG2MoX1pHhUSo5v',
-    appsecret: '83jbe4urD1dJndTAjcJHWbflgEQ8oPCYlX50UGT78FVU_Zg_e_Ewi4ikNQXh-vYI',
+    appkey: 'ding3rshvth5dvkennuo', //测试
+    // appkey: 'ding45k7jzzaazg6stmg', 
+    appsecret: 'PdU597wy0qhr4TiWmq1q958z1WeS41QUAGNEk7Y4n9-K1OX8pZG2MoX1pHhUSo5v',//测试
+    // appsecret: '83jbe4urD1dJndTAjcJHWbflgEQ8oPCYlX50UGT78FVU_Zg_e_Ewi4ikNQXh-vYI',
     exportUsersDeptId:'97195324',//导出excel的部门id
     mongodburl:'mongodb://localhost:27017/',
-    angentId:'334181686',
-    // angentId:'307182050',
+    // angentId:'334181686',
+    angentId:'307182050',//测试
     VOTESTATEOK:'0',//正常
     VOTESTATEOT:'1',//结束
     VOTESTATECP:'2',//已参与

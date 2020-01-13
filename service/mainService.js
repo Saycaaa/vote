@@ -1,5 +1,6 @@
 var httpReq = require('../libs/http');
 var config = require('../config.default.js');
+var sha1 = require('js-sha1');
 var MongoClient = require('mongodb').MongoClient;
 var url = config.mongodburl;
 //======================导入=====================

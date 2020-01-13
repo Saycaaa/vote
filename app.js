@@ -32,7 +32,7 @@ app.use(session({
     resave: true,
     saveUninitialized: false, // 是否保存未初始化的会话
     cookie: {
-        maxAge: 1000 * 120 * 60, // 设置 session 的有效时间，单位毫秒
+        maxAge: 1000*120*60, // 设置 session 的有效时间，单位毫秒
     },
 }));
 HttpUtils = new httpReq(config.oapiHost);
@@ -43,6 +43,9 @@ mainService.getWeitArr();
 //====================================处理http请求========================
 // 获取用户信息
 app.use('/login', function (req, res) {
+    res.header("Access-Control-Allow-Origin","http://localhost:8081");//开发过程中解决跨域问题-待删除
+    res.header("Access-Control-Allow-Credentials","true");//开发过程中解决跨域问题-待删除
+    
     // 获取access_token
     HttpUtils.get("/gettoken", {
         "appkey": config.appkey,
@@ -177,6 +180,7 @@ app.use('/release', async function (req, res) {
                 let accessToken = await mainService.getAccessToken();
                 let isOk = await voteService.updateVote(queryObj, updateObj);
                 let msgOK = await voteService.senLinkMsg(accessToken, param.vote.parUser, msg);
+                // let msgOK=true;
                 if (isOk && msgOK) {
                     res.send(config.err.ok);
                 } else {
@@ -222,6 +226,7 @@ app.use('/release', async function (req, res) {
                 }
                 let accessToken = await mainService.getAccessToken();
                 let msgOK = await voteService.senLinkMsg(accessToken, noVoteList, msg);
+                // let msgOK=true;
                 if (msgOK) {
                     res.send(config.err.ok);
                 } else {
@@ -520,6 +525,66 @@ app.use('/getOriginalVote', function (req, res) {
     } catch (error) {
         res.send(config.err.serverErr);
         console.log(error);
+    }
+});
+
+ //获取子部门
+app.use('/getDept', function (req, res) {
+    try {
+        res.header("Access-Control-Allow-Origin","http://localhost:8081");//开发过程中解决跨域问题-待删除
+        res.header("Access-Control-Allow-Credentials","true");//开发过程中解决跨域问题-待删除
+        let pId=req.body.pId||1;
+        let currentUser = req.session.logInfo;
+        if (!currentUser) {
+            res.send({status:config.err.logTimeout});
+            return;
+        }
+        HttpUtils.get("/department/list", {
+            "id":pId,
+            "fetch_child":false,
+            "access_token": currentUser.access_token,
+        }, function (err, body) {
+            if (!err) {
+                res.send({status:config.err.ok,data:body.department});
+            } else {
+                console.log('获取部门失败');
+                res.send({status:config.err.serverErr});
+            }
+        });
+    } catch (error) {
+        res.send({status:config.err.serverErr});
+    }
+});
+
+//获取部门下的用户列表
+app.use('/getDeptUser', function (req, res) {
+    try {
+        res.header("Access-Control-Allow-Origin","http://localhost:8081");//开发过程中解决跨域问题-待删除
+        res.header("Access-Control-Allow-Credentials","true");//开发过程中解决跨域问题-待删除
+        let dId=req.body.dId;
+        let currentUser = req.session.logInfo;
+        if (!currentUser) {
+            res.send({status:config.err.logTimeout});
+            return;
+        }
+        if(!dId){
+            res.send({status:config.err.ok,data:[]});
+        }else{
+            HttpUtils.get("/user/simplelist", {
+                "department_id":dId,
+                "access_token": currentUser.access_token,
+            }, function (err, body) {
+                if (!err) {
+                    res.send({status:config.err.ok,data:body.userlist});
+                } else {
+                    console.log('获取部门人员失败');
+                    res.send({status:config.err.serverErr});
+                }
+            });
+        }
+        
+    } catch (error) {
+        res.send({status:config.err.serverErr});
     }
 });
 
