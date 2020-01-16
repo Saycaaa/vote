@@ -40,18 +40,23 @@ HttpUtils = new httpReq(config.oapiHost);
 global.gloablField = {};
 //初始化股东股份权重数组
 mainService.getWeitArr();
-//====================================处理http请求========================
-// 获取用户信息
-app.use('/login', function (req, res) {
+//======================================拦截器=================================
+app.use(function(req,res,next){
     res.header("Access-Control-Allow-Origin","http://localhost:8081");//开发过程中解决跨域问题-待删除
     res.header("Access-Control-Allow-Credentials","true");//开发过程中解决跨域问题-待删除
-    
+    console.log("拦截成功");
+    next();
+});
+//====================================处理http请求========================
+// 获取用户信息
+app.use('/login', function (req, res) {    
     // 获取access_token
     HttpUtils.get("/gettoken", {
         "appkey": config.appkey,
         "appsecret": config.appsecret,
     }, function (err, body) {
         if (!err) {
+            console.log(body);
             var code = req.body.authCode;
             var accessToken = body.access_token;
             //获取用户id 
@@ -110,7 +115,6 @@ app.use('/login', function (req, res) {
 });
 //发布新问卷
 app.use('/buildNewVote', async function (req, res) {
-
     let param = JSON.parse(req.body.param);
     try {
         let a = new Promise((resolve, reject) => {
@@ -531,8 +535,6 @@ app.use('/getOriginalVote', function (req, res) {
  //获取子部门
 app.use('/getDept', function (req, res) {
     try {
-        res.header("Access-Control-Allow-Origin","http://localhost:8081");//开发过程中解决跨域问题-待删除
-        res.header("Access-Control-Allow-Credentials","true");//开发过程中解决跨域问题-待删除
         let pId=req.body.pId||1;
         let currentUser = req.session.logInfo;
         if (!currentUser) {
@@ -559,8 +561,6 @@ app.use('/getDept', function (req, res) {
 //获取部门下的用户列表
 app.use('/getDeptUser', function (req, res) {
     try {
-        res.header("Access-Control-Allow-Origin","http://localhost:8081");//开发过程中解决跨域问题-待删除
-        res.header("Access-Control-Allow-Credentials","true");//开发过程中解决跨域问题-待删除
         let dId=req.body.dId;
         let currentUser = req.session.logInfo;
         if (!currentUser) {
